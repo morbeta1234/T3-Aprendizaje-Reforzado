@@ -217,7 +217,7 @@ def main():
         plt.savefig('cliff_walking_comparison.png')
         plt.close()
         
-        print("Done! Results saved in cliff_walking_comparison.png")
+        print("Listo! Los resultados se han guardado en cliff_walking_comparison.png")
         
     except Exception as e:
         print(f"An error occurred: {str(e)}")
