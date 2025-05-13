@@ -69,14 +69,6 @@ def value_iteration(Np, Nt, Rmax, n_states, n_actions, gamma, m, fict_terminal_i
     return V[:n_states], policy
 
 class RMaxAgentVI:
-    """
-    Agente R-Max con Value Iteration.
-    - En cada paso real:
-        1. Ejecuta value iteration sobre el modelo aprendido (planificar).
-        2. Elige la acción greedy respecto a la política calculada.
-        3. Ejecuta la acción en el entorno y observa la transición.
-        4. Actualiza el modelo (contadores N_t y N_p).
-    """
     def __init__(self, n_states, n_actions, gamma=1.0, Rmax=1, m=1):
         self.n_states = n_states
         self.n_actions = n_actions
@@ -90,7 +82,7 @@ class RMaxAgentVI:
         self.policy = np.zeros(n_states, dtype=int)
     
     def update_model(self, s, a, sp, r):
-        """Actualiza los contadores del modelo con la transición observada."""
+        # Actualiza los contadores del modelo con la transición observada.
         key = (s, a)
         if key not in self.Nt:
             self.Nt[key] = 0
@@ -102,19 +94,19 @@ class RMaxAgentVI:
         self.Np[key][spr] += 1
     
     def plan(self):
-        """Ejecuta value iteration sobre el modelo aprendido para actualizar V y la política."""
+        # Ejecuta value iteration sobre el modelo aprendido para actualizar V y la política.
         self.V, self.policy = value_iteration(self.Np, self.Nt, self.Rmax, self.n_states, self.n_actions, self.gamma, self.m, self.fict_terminal_idx)
     
     def get_action(self, s):
-        """Devuelve la acción greedy respecto a la política calculada."""
+        # Devuelve la acción greedy respecto a la política calculada.
         return self.policy[s]
 
     def get_policy(self):
-        """Devuelve la política actual (array de acciones por estado)."""
+        # Devuelve la política actual (array de acciones por estado).
         return self.policy.copy()
 
     def print_policy(self):
-        """Imprime la política actual de forma legible."""
+        # Imprime la política actual de forma legible.
         print("Política actual (acción por estado):")
         print(self.policy)
 
@@ -159,6 +151,7 @@ def run_dyna(env, n_episodes=20, n_runs=5, n_planning_steps=0):
                 episode_return += reward
                 
             returns[run, episode] = episode_return
+            print(f"Episode {episode} finished with return {episode_return}")
             
     return np.mean(returns, axis=0)
 
@@ -189,9 +182,7 @@ def run_rmax(env, n_episodes=20, n_runs=5):
                 state_idx = next_state_idx
                 episode_return += reward
             returns[run, episode] = episode_return
-        # (Opcional) Imprimir la política final aprendida por el agente en este run
-        print("Política final del agente en este run:")
-        agent.print_policy()
+            print(f"Episode {episode} finished with return {episode_return}")
     return np.mean(returns, axis=0)
 
 def index_to_action(action_idx):
@@ -217,17 +208,21 @@ def main():
         # Dyna
         dyna_returns = run_dyna(env, n_episodes, n_runs, n_steps)
         dyna_results.append(np.mean(dyna_returns))
+    
     # RMax (solo una vez)
     rmax_result = run_rmax(env, n_episodes, n_runs)
+
+    
     # Mostrar resultados en tabla
     print("\nResults (Average Return per Episode):")
     print("-" * 50)
-    print(f"{'Planning Steps':<15} {'Dyna':<15}")
+    print("\nTabla: Retorno medio por episodio")
+    print("-" * 50)
+    print(f"{'Algoritmo':<20} {'Planning Steps':<15} {'Retorno':<10}")
     print("-" * 50)
     for steps, dyna in zip(planning_steps, dyna_results):
-        print(f"{steps:<15} {dyna:<15.2f}")
-    print("-" * 50)
-    print(f"{'RMax':<15} {np.mean(rmax_result):<15.2f}")
+        print(f"{'Dyna':<20} {steps:<15} {dyna:<10.2f}")
+    print(f"{'RMax':<20} {'N/A':<15} {np.mean(rmax_result):<10.2f}")
     print("-" * 50)
     # Graficar resultados
     plt.figure(figsize=(10, 6))
