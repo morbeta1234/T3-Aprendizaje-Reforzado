@@ -17,3 +17,9 @@ Para el inciso `e)`:
 ```bash
 python T3-TD_Learning/Code_T3/multigoal.py
 ```
+
+Para el inciso `g)`:
+
+```bash
+python T3-TD_Learning/Code_T3/partial_obs.py
+```
