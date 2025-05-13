@@ -6,9 +6,9 @@ import time
 
 def show(env, current_state, reward=None):
     env.show()
-    print(f"Raw state: {current_state}")
+    print(f"Estado actual: {current_state}")
     if reward:
-        print(f"Reward: {reward}")
+        print(f"Recompensa: {reward}")
 
 class CliffWalkingAgent:
     def __init__(self, n_states, n_actions, learning_rate=0.1, discount=1.0, epsilon=0.1):
@@ -43,7 +43,7 @@ def run_q_learning(env, n_episodes=500, n_runs=100, visualize=False):
             done = False
             episode_return = 0
             
-            if visualize and episode % 100 == 0:  # Visualize every 100th episode
+            if visualize and episode % 100 == 0:  # Visualizar cada 100 episodios
                 print(f"\nEpisode {episode + 1}")
                 show(env, state)
                 time.sleep(0.5)
@@ -53,7 +53,7 @@ def run_q_learning(env, n_episodes=500, n_runs=100, visualize=False):
                 next_state, reward, done = env.step(index_to_action(action))
                 next_state_idx = state_to_index(next_state, env._width)
                 
-                # Q-learning update
+                # Actualización Q-learning 
                 best_next_action = np.argmax(agent.Q[next_state_idx])
                 agent.Q[state_idx, action] += agent.alpha * (
                     reward + agent.gamma * agent.Q[next_state_idx, best_next_action] - 
@@ -130,7 +130,7 @@ def run_n_step_sarsa(env, n_steps=4, n_episodes=500, n_runs=100, visualize=False
                 show(env, state)
                 time.sleep(0.5)
             
-            # Initialize trajectory storage
+            # Inicializar almacenamiento de trayectoria
             states = [state_idx]
             actions = [action]
             rewards = [0]
@@ -189,17 +189,17 @@ def main():
         n_runs = 100
         visualize = False  # Set to True to see the environment during training
         
-        print("Starting experiments...")
+        print("Iniciando experimentos...")
         
         # Run experiments
-        print("\nRunning Q-learning...")
+        print("\nEjecutando Q-learning...")
         q_learning_returns = run_q_learning(env, n_episodes, n_runs, visualize)
-        print("\nRunning Sarsa...")
+        print("\nEjecutando Sarsa...")
         sarsa_returns = run_sarsa(env, n_episodes, n_runs, visualize)
-        print("\nRunning 4-step Sarsa...")
+        print("\nEjecutando 4-step Sarsa...")
         n_step_sarsa_returns = run_n_step_sarsa(env, n_steps=4, n_episodes=n_episodes, n_runs=n_runs, visualize=visualize)
         
-        print("\nPlotting results...")
+        print("\nGraficando resultados...")
         # Plot results
         plt.figure(figsize=(10, 6))
         episodes = range(1, n_episodes + 1)
@@ -208,8 +208,8 @@ def main():
         plt.plot(episodes, sarsa_returns, label='Sarsa')
         plt.plot(episodes, n_step_sarsa_returns, label='4-step Sarsa')
         
-        plt.xlabel('Episodes')
-        plt.ylabel('Average Return')
+        plt.xlabel('Episodios')
+        plt.ylabel('Retorno promedio')
         plt.title('Cliff Walking: Q-learning vs Sarsa vs 4-step Sarsa')
         plt.legend()
         plt.grid(True)
@@ -217,7 +217,7 @@ def main():
         plt.savefig('cliff_walking_comparison.png')
         plt.close()
         
-        print("Done! Results saved in cliff_walking_comparison.png")
+        print("Listo! Los resultados se han guardado en cliff_walking_comparison.png")
         
     except Exception as e:
         print(f"An error occurred: {str(e)}")
